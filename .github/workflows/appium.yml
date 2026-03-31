@@ -1,0 +1,41 @@
+name: Appium Mobile Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  mobile-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Appium tests on BrowserStack
+        env:
+          USE_BROWSERSTACK: "true"
+          BS_USERNAME: ${{ secrets.BS_USERNAME }}
+          BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
+          BS_APP_URL: ${{ secrets.BS_APP_URL }}
+        run: pytest --html=reports/report.html --self-contained-html -v
+        continue-on-error: true
+
+      - name: Upload test report artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: appium-test-report
+          path: reports/report.html
+          retention-days: 14
