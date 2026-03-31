@@ -30,11 +30,10 @@ def get_browserstack_options():
         "projectName": "Saucelabs Mobile QA",
         "buildName": "GitHub Actions CI",
         "sessionName": "Appium Test Run",
+        "debug": "true",
+        "networkLogs": "true",
     })
-    bs_url = (
-        f"https://{os.environ['BS_USERNAME']}:{os.environ['BS_ACCESS_KEY']}"
-        f"@hub-cloud.browserstack.com/wd/hub"
-    )
+    bs_url = "https://hub-cloud.browserstack.com/wd/hub"
     return options, bs_url
 
 @pytest.fixture(scope="function")
